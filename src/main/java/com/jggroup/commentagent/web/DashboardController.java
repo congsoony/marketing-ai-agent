@@ -2,7 +2,7 @@ package com.jggroup.commentagent.web;
 
 import com.jggroup.commentagent.config.AppProperties;
 import com.jggroup.commentagent.dto.*;
-import com.jggroup.commentagent.service.ClaudeCommentService;
+import com.jggroup.commentagent.service.OpenAiCommentService;
 import com.jggroup.commentagent.service.PostingService;
 import com.jggroup.commentagent.service.YoutubeService;
 import com.jggroup.commentagent.util.VideoIdExtractor;
@@ -28,14 +28,14 @@ public class DashboardController {
 
     private final AppProperties props;
     private final YoutubeService youtube;
-    private final ClaudeCommentService claude;
+    private final OpenAiCommentService commentService;
     private final PostingService posting;
 
     public DashboardController(AppProperties props, YoutubeService youtube,
-                               ClaudeCommentService claude, PostingService posting) {
+                               OpenAiCommentService commentService, PostingService posting) {
         this.props = props;
         this.youtube = youtube;
-        this.claude = claude;
+        this.commentService = commentService;
         this.posting = posting;
     }
 
@@ -58,7 +58,7 @@ public class DashboardController {
                              @RequestParam(required = false) String url) {
         String id = VideoIdExtractor.extract(videoId != null ? videoId : url);
         VideoContext ctx = youtube.buildContext(id);
-        return claude.generate(ctx);
+        return commentService.generate(ctx);
     }
 
     // ③ 게시 시작
@@ -91,7 +91,7 @@ public class DashboardController {
                 "dailyMax", props.getLimits().getDailyMaxComments(),
                 "profiles", props.getProfiles().stream().map(AppProperties.Profile::getName).toList(),
                 "youtubeKeyConfigured", props.getYoutube().isConfigured(),
-                "claudeKeyConfigured", props.getClaude().isConfigured()
+                "openaiKeyConfigured", props.getOpenai().isConfigured()
         );
     }
 }

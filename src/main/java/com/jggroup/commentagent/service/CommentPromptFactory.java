@@ -5,8 +5,8 @@ import com.jggroup.commentagent.dto.VideoContext;
 import org.springframework.stereotype.Component;
 
 /**
- * Claude 에 보낼 프롬프트(시스템/사용자) 작성 전담.
- * {@link ClaudeCommentService} 에서 '무엇을 시킬지'(프롬프트)를 떼어내,
+ * AI(OpenAI)에 보낼 프롬프트(시스템/사용자) 작성 전담.
+ * {@link OpenAiCommentService} 에서 '무엇을 시킬지'(프롬프트)를 떼어내,
  * 서비스는 '호출·검증·재생성 흐름'에만 집중하도록 책임을 분리한다(단일 책임).
  */
 @Component

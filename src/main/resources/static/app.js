@@ -39,7 +39,7 @@ async function loadConfig() {
   // 키 미설정 경고
   const warn = [];
   if (!CONFIG.youtubeKeyConfigured) warn.push('YOUTUBE_API_KEY');
-  if (!CONFIG.claudeKeyConfigured) warn.push('ANTHROPIC_API_KEY');
+  if (!CONFIG.openaiKeyConfigured) warn.push('OPENAI_API_KEY');
   if (warn.length) {
     const w = $('keyWarn');
     w.textContent = '⚠ 환경변수 미설정: ' + warn.join(', ') +

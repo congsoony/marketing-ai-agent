@@ -38,12 +38,12 @@ app:
     region: KR
     relevance-language: ko
     default-query: 연애
-  claude:
-    api-key: ${ANTHROPIC_API_KEY:}
-    model: claude-sonnet-4-6
-    base-url: https://api.anthropic.com
-    anthropic-version: "2023-06-01"
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: gpt-4o-mini
+    base-url: https://api.openai.com
     max-tokens: 1024
+    temperature: 0.8
   comment:
     min-chars: 40
     max-chars: 120

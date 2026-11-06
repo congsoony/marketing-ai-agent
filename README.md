@@ -26,7 +26,7 @@
 | 요구사항 | 구현 |
 |---|---|
 | ① 영상 불러오기 (썸네일·제목·채널·날짜) | `YoutubeService.listLatest` + `/api/videos` |
-| ② 고민 한 줄 + 댓글 초안 (자막/제목·설명 + 인기댓글 기반) | `YoutubeService.buildContext` + `TranscriptService` + `ClaudeCommentService` |
+| ② 고민 한 줄 + 댓글 초안 (자막/제목·설명 + 인기댓글 기반) | `YoutubeService.buildContext` + `TranscriptService` + `OpenAiCommentService` |
 | 댓글 규칙 (40~120자, 링크·해시태그·가짜후기 금지) | `CommentRuleService` (생성 후 2차 검증·재생성) |
 | ③ 크롬 프로필 열림 → 한 글자씩 → 게시 → 확인 | `BrowserPostService` (Playwright `launchPersistentContext`) |
 | 기본 프로필 자동제어 금지 (`--user-data-dir`) | 프로필별 `user-data-dir`로 persistent context |
@@ -45,7 +45,7 @@
 - **Spring Boot 3.5.3** (Java 21) — REST API + 대시보드 서빙
 - **Playwright 1.52** (Java) — 실제 크롬 프로필 구동·타이핑·게시
 - **YouTube Data API v3** — 영상 목록·메타·인기댓글·뜨기직전 탐색
-- **Claude API** (`claude-sonnet-4-6`) — 고민 요약 + 댓글 생성
+- **OpenAI API** (`gpt-4o-mini`, JSON 모드) — 고민 요약 + 댓글 생성
 - **H2** (파일 DB) — 기록·운영규칙 집계
 - 프론트: 바닐라 HTML/CSS/JS
 
@@ -59,7 +59,7 @@
 
 ### 2) API 키 2개 발급
 - **YouTube Data API v3 키** — Google Cloud Console → API 및 서비스 → 사용 설정 → 키 발급
-- **Anthropic Claude API 키** — <https://console.anthropic.com>
+- **OpenAI API 키** — <https://platform.openai.com/api-keys> (결제/크레딧 필요)
 
 > 키는 코드/저장소에 넣지 않고 **환경변수로만** 주입합니다. (`.env.example` 참고)
 
@@ -82,13 +82,13 @@
 **PowerShell**
 ```powershell
 $env:YOUTUBE_API_KEY="발급받은_유튜브_키"
-$env:ANTHROPIC_API_KEY="발급받은_클로드_키"
+$env:OPENAI_API_KEY="발급받은_OpenAI_키"
 .\mvnw.cmd spring-boot:run
 ```
 
 **bash**
 ```bash
-YOUTUBE_API_KEY=... ANTHROPIC_API_KEY=... ./mvnw spring-boot:run
+YOUTUBE_API_KEY=... OPENAI_API_KEY=... ./mvnw spring-boot:run
 ```
 
 브라우저에서 **<http://localhost:8080>** 접속.

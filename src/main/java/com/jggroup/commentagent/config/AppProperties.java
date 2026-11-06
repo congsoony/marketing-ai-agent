@@ -15,7 +15,7 @@ import java.util.List;
 public class AppProperties {
 
     private Youtube youtube = new Youtube();
-    private Claude claude = new Claude();
+    private OpenAi openai = new OpenAi();
     private Comment comment = new Comment();
     private Limits limits = new Limits();
     private List<Profile> profiles = new ArrayList<>();
@@ -35,12 +35,12 @@ public class AppProperties {
     }
 
     @Data
-    public static class Claude {
+    public static class OpenAi {
         private String apiKey;
-        private String model = "claude-sonnet-4-6";
-        private String baseUrl = "https://api.anthropic.com";
-        private String anthropicVersion = "2023-06-01";
+        private String model = "gpt-4o-mini";
+        private String baseUrl = "https://api.openai.com";
         private int maxTokens = 1024;
+        private double temperature = 0.8;
 
         public boolean isConfigured() {
             return apiKey != null && !apiKey.isBlank();

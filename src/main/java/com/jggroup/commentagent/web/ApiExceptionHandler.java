@@ -54,7 +54,7 @@ public class ApiExceptionHandler {
         return build(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage(), "CONFIG");
     }
 
-    /** 그 외 — YouTube/Claude 호출 실패 등 → 500. */
+    /** 그 외 — YouTube/OpenAI 호출 실패 등 → 500. */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> generic(Exception e) {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), "ERROR");
