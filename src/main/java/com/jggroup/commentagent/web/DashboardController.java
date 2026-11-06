@@ -5,6 +5,7 @@ import com.jggroup.commentagent.dto.*;
 import com.jggroup.commentagent.service.ClaudeCommentService;
 import com.jggroup.commentagent.service.PostingService;
 import com.jggroup.commentagent.service.YoutubeService;
+import com.jggroup.commentagent.util.VideoIdExtractor;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,7 @@ public class DashboardController {
     @GetMapping("/draft")
     public DraftResult draft(@RequestParam(required = false) String videoId,
                              @RequestParam(required = false) String url) {
-        String id = VideoIdSupport.extract(videoId != null ? videoId : url);
+        String id = VideoIdExtractor.extract(videoId != null ? videoId : url);
         VideoContext ctx = youtube.buildContext(id);
         return claude.generate(ctx);
     }
