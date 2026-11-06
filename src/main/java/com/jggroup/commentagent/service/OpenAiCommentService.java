@@ -38,11 +38,11 @@ public class OpenAiCommentService {
     private final RestClient client;
 
     public OpenAiCommentService(AppProperties props, CommentRuleService ruleService,
-                                CommentPromptFactory promptFactory) {
+                                CommentPromptFactory promptFactory, RestClient.Builder clientBuilder) {
         this.props = props;
         this.ruleService = ruleService;
         this.promptFactory = promptFactory;
-        this.client = RestClient.builder()
+        this.client = clientBuilder
                 .baseUrl(props.getOpenai().getBaseUrl())
                 .build();
     }

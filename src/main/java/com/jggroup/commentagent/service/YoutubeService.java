@@ -33,10 +33,11 @@ public class YoutubeService {
     private final RestClient client;
     private final TranscriptService transcriptService;
 
-    public YoutubeService(AppProperties props, TranscriptService transcriptService) {
+    public YoutubeService(AppProperties props, TranscriptService transcriptService,
+                          RestClient.Builder clientBuilder) {
         this.props = props;
         this.transcriptService = transcriptService;
-        this.client = RestClient.builder().baseUrl(BASE).build();
+        this.client = clientBuilder.baseUrl(BASE).build();
     }
 
     private void requireKey() {
