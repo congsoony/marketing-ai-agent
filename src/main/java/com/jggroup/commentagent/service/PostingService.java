@@ -6,6 +6,8 @@ import com.jggroup.commentagent.domain.PostStatus;
 import com.jggroup.commentagent.dto.PostRequest;
 import com.jggroup.commentagent.dto.PostResult;
 import com.jggroup.commentagent.dto.PostStatusView;
+import com.jggroup.commentagent.exception.NotFoundException;
+import com.jggroup.commentagent.exception.RuleViolationException;
 import com.jggroup.commentagent.repository.PostLogRepository;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -146,7 +148,7 @@ public class PostingService {
 
     public PostStatusView getStatus(Long id) {
         return repo.findById(id).map(this::toView)
-                .orElseThrow(() -> new IllegalArgumentException("작업을 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new NotFoundException("작업을 찾을 수 없습니다: " + id));
     }
 
     public List<PostStatusView> recentLogs() {

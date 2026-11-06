@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jggroup.commentagent.config.AppProperties;
 import com.jggroup.commentagent.dto.VideoContext;
 import com.jggroup.commentagent.dto.VideoSummary;
+import com.jggroup.commentagent.exception.ConfigMissingException;
+import com.jggroup.commentagent.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -39,7 +41,7 @@ public class YoutubeService {
 
     private void requireKey() {
         if (!props.getYoutube().isConfigured()) {
-            throw new IllegalStateException("YOUTUBE_API_KEY 가 설정되지 않았습니다. 환경변수로 주입하세요.");
+            throw new ConfigMissingException("YOUTUBE_API_KEY 가 설정되지 않았습니다. 환경변수로 주입하세요.");
         }
     }
 
@@ -81,7 +83,7 @@ public class YoutubeService {
     public VideoSummary getSummary(String videoId) {
         requireKey();
         JsonNode item = fetchVideoNode(videoId);
-        if (item == null) throw new IllegalArgumentException("영상을 찾을 수 없습니다: " + videoId);
+        if (item == null) throw new NotFoundException("영상을 찾을 수 없습니다: " + videoId);
         JsonNode sn = item.path("snippet");
         return VideoSummary.basic(
                 videoId,
@@ -95,7 +97,7 @@ public class YoutubeService {
     public VideoContext buildContext(String videoId) {
         requireKey();
         JsonNode item = fetchVideoNode(videoId);
-        if (item == null) throw new IllegalArgumentException("영상을 찾을 수 없습니다: " + videoId);
+        if (item == null) throw new NotFoundException("영상을 찾을 수 없습니다: " + videoId);
         JsonNode sn = item.path("snippet");
         String title = sn.path("title").asText("");
         String channel = sn.path("channelTitle").asText("");
