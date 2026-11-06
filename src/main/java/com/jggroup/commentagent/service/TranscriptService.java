@@ -26,12 +26,16 @@ public class TranscriptService {
     private static final int MAX_CHARS = 6000;
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private final RestClient client = RestClient.builder()
-            .defaultHeader("User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                            + "(KHTML, like Gecko) Chrome/125.0 Safari/537.36")
-            .defaultHeader("Accept-Language", "ko-KR,ko;q=0.9")
-            .build();
+    private final RestClient client;
+
+    public TranscriptService(RestClient.Builder clientBuilder) {
+        this.client = clientBuilder
+                .defaultHeader("User-Agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                                + "(KHTML, like Gecko) Chrome/125.0 Safari/537.36")
+                .defaultHeader("Accept-Language", "ko-KR,ko;q=0.9")
+                .build();
+    }
 
     public String fetchBestEffort(String videoId) {
         try {
