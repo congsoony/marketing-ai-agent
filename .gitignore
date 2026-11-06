@@ -1,0 +1,50 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### 과제: 비밀값 / 로컬 상태 (저장소에 올리지 않음) ###
+.env
+*.env
+!/.env.example
+/chrome-profiles/
+/screenshots/
+/data/
+application-local.yml
+application-local.yaml
+
+### 작업 중 생긴 임시물 ###
+boot.log
+req.txt
+
+### 과제 문서(회사 자료) — Public 저장소에 올리려면 아래 한 줄을 지우세요 ###
+요구사항.pdf
