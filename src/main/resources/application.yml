@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: comment-agent
+  datasource:
+    url: jdbc:h2:file:./data/comment-agent;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.jggroup.commentagent: INFO
+
+# ──────────────────────────────────────────────────────────────
+# 과제 설정 (요구사항 "설정 예시" 대응)
+#   profiles: [유튜브1, 유튜브2, 유튜브3]
+#   comment:  { min_chars: 40, max_chars: 120, brand: 운명원 }
+#   limits:   { daily_max_comments: 10 }
+# 비밀값(API 키)은 환경변수로만 주입 — 저장소에 커밋되지 않음
+# ──────────────────────────────────────────────────────────────
+app:
+  youtube:
+    api-key: ${YOUTUBE_API_KEY:}
+    region: KR
+    relevance-language: ko
+    default-query: 연애
+  claude:
+    api-key: ${ANTHROPIC_API_KEY:}
+    model: claude-sonnet-4-6
+    base-url: https://api.anthropic.com
+    anthropic-version: "2023-06-01"
+    max-tokens: 1024
+  comment:
+    min-chars: 40
+    max-chars: 120
+    brand: 운명원
+    brand-desc: 연애 사주 잘 봐주는 곳으로 유명한 곳
+  limits:
+    daily-max-comments: 10
+  profiles:
+    - name: 유튜브1
+      user-data-dir: ./chrome-profiles/youtube1
+    - name: 유튜브2
+      user-data-dir: ./chrome-profiles/youtube2
+    - name: 유튜브3
+      user-data-dir: ./chrome-profiles/youtube3
+  browser:
+    channel: chrome          # 설치된 크롬 사용 (별도 user-data-dir로 기본 프로필 자동제어 방지)
+    headless: false
+    type-delay-ms: 120       # 한 글자씩 타이핑 간격(ms) — 시연에서 보이도록
+    nav-timeout-ms: 30000
+    screenshot-dir: ./screenshots
+  trending:
+    query: 연애
+    min-views: 1000
+    max-views: 5000
+    min-views-per-hour: 150
+    published-within-hours: 48
