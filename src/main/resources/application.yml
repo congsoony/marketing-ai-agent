@@ -1,6 +1,10 @@
 spring:
   application:
     name: comment-agent
+  # 비밀값(API 키)은 프로젝트 루트의 secret.yml 에서 읽는다(있으면). 저장소엔 올라가지 않음.
+  # 파일이 없어도(optional) 기동되며, 그때는 환경변수(${...})로 주입할 수 있다.
+  config:
+    import: "optional:file:./secret.yml"
   datasource:
     url: jdbc:h2:file:./data/comment-agent;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver

@@ -41,6 +41,10 @@ build/
 /data/
 application-local.yml
 application-local.yaml
+### 로컬 비밀값 파일 (secret.yml.example 은 템플릿이라 커밋) ###
+/secret.yml
+/secret.yaml
+!/secret.yml.example
 
 ### 작업 중 생긴 임시물 ###
 boot.log
