@@ -58,17 +58,18 @@ async function loadVideos(trending) {
     const videos = await api(url);
     if (!videos.length) { list.innerHTML = '<p class="empty">결과가 없습니다.</p>'; return; }
     list.innerHTML = '';
-    videos.forEach(v => list.appendChild(videoItem(v)));
+    videos.forEach((v, i) => list.appendChild(videoItem(v, i)));
   } catch (e) {
     list.innerHTML = '<p class="empty">불러오기 실패: ' + e.message + '</p>';
     toast(e.message, true);
   }
 }
 
-function videoItem(v) {
+function videoItem(v, i) {
   const el = document.createElement('div');
   el.className = 'vitem';
   el.dataset.id = v.videoId;
+  el.style.setProperty('--i', i || 0);   // 순차 등장(stagger) 딜레이
   const date = (v.publishedAt || '').slice(0, 10);
   const stat = (v.viewCount != null)
     ? `<span class="vstat">🔥 조회 ${v.viewCount.toLocaleString()} · 시간당 ${v.viewsPerHour}</span>` : '';
