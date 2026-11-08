@@ -87,7 +87,7 @@ body::before{
 
 /* ── 보드 3칸 ─────────────────────────────────────────── */
 .board{max-width:1320px; width:calc(100% - 36px); margin:14px auto;
-  display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px}
+  display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:16px}
 @media(max-width:980px){.board{grid-template-columns:1fr}}
 
 .col{
