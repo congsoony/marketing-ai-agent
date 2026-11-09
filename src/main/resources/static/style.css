@@ -161,7 +161,7 @@ button.small{padding:6px 11px; font-size:12px}
   min-height:420px; max-height:min(72vh, 800px);
   display:flex; flex-direction:column; gap:16px; padding:0 8px 0 0}
 /* 세로형 카드: 썸네일(16:9 풀폭) 위 + 정보 아래 → 무슨 영상인지 한눈에 */
-.vitem{display:flex; flex-direction:column; padding:0; border:1px solid var(--line); border-radius:12px;
+.vitem{display:flex; flex-direction:column; flex:0 0 auto; padding:0; border:1px solid var(--line); border-radius:12px;
   cursor:pointer; background:var(--panel-3); position:relative; overflow:hidden;
   transition:border-color .18s, transform .18s, box-shadow .18s;
   animation:fadeUp .4s both; animation-delay:calc(var(--i,0) * 45ms)}
