@@ -58,21 +58,26 @@ async function loadVideos(trending) {
     const videos = await api(url);
     if (!videos.length) { list.innerHTML = '<p class="empty">결과가 없습니다.</p>'; return; }
     list.innerHTML = '';
-    videos.forEach((v, i) => list.appendChild(videoItem(v, i)));
+    videos.forEach((v, i) => list.appendChild(videoItem(v, i, trending)));
   } catch (e) {
     list.innerHTML = '<p class="empty">불러오기 실패: ' + e.message + '</p>';
     toast(e.message, true);
   }
 }
 
-function videoItem(v, i) {
+function videoItem(v, i, trending) {
   const el = document.createElement('div');
   el.className = 'vitem';
   el.dataset.id = v.videoId;
   el.style.setProperty('--i', i || 0);   // 순차 등장(stagger) 딜레이
   const date = (v.publishedAt || '').slice(0, 10);
-  const stat = (v.viewCount != null)
-    ? `<span class="vstat">🔥 조회 ${v.viewCount.toLocaleString()} · 시간당 ${v.viewsPerHour}</span>` : '';
+  // 뜨기 직전 탐색: 🔥 조회 N · 시간당 X / 일반 불러오기: 조회 N 만
+  let stat = '';
+  if (v.viewCount != null) {
+    stat = trending
+      ? `<span class="vstat">🔥 조회 ${v.viewCount.toLocaleString()} · 시간당 ${v.viewsPerHour}</span>`
+      : `<span class="vstat">조회 ${v.viewCount.toLocaleString()}</span>`;
+  }
   el.innerHTML =
     `<img src="${v.thumbnailUrl}" alt=""/>` +
     `<div class="vmeta"><span class="vtitle">${esc(v.title)}</span>` +
