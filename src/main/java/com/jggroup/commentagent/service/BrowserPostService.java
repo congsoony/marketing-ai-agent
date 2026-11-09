@@ -52,7 +52,8 @@ public class BrowserPostService {
                             .setHeadless(b.isHeadless())
                             .setChannel(b.getChannel())          // 설치된 크롬 사용
                             .setLocale("ko-KR")
-                            .setViewportSize(1360, 900)
+                            // 뷰포트 고정 해제 → 실제 창 크기에 맞게 페이지가 채워짐(최대화/리사이즈 반영)
+                            .setViewportSize((com.microsoft.playwright.options.ViewportSize) null)
                             .setArgs(List.of("--lang=ko-KR", "--start-maximized"));
 
             try (BrowserContext context = playwright.chromium()
