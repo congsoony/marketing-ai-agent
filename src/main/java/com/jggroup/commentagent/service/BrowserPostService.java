@@ -132,16 +132,27 @@ public class BrowserPostService {
         } catch (Exception ignored) { }
     }
 
-    /** 유튜브 로그인 여부: 로그인 버튼이 보이면 미로그인으로 간주. */
+    /**
+     * 유튜브 로그인 여부.
+     * 유튜브 헤더(아바타/로그인 버튼)는 비동기로 늦게 렌더되므로, 즉시 판정하지 않고
+     * 둘 중 하나가 나타날 때까지 최대 ~6초 폴링한다(성급한 미로그인 오판 방지).
+     */
     private boolean isLoggedIn(Page page) {
+        String signInSel = "a[aria-label='로그인'], a[href*='ServiceLogin'], "
+                + "a[href*='accounts.google.com'], ytd-button-renderer a:has-text('로그인')";
+        for (int i = 0; i < 12; i++) {
+            try {
+                if (page.locator("#avatar-btn").count() > 0) return true;   // 아바타 → 로그인됨
+                Locator signIn = page.locator(signInSel);
+                if (signIn.count() > 0 && signIn.first().isVisible()) return false; // 로그인 버튼 → 미로그인
+            } catch (Exception ignored) { }
+            page.waitForTimeout(500);
+        }
+        // 끝까지 불명확하면 아바타 유무로 최종 판정
         try {
-            Locator signIn = page.locator("a[aria-label='로그인'], ytd-button-renderer a:has-text('로그인')");
-            if (signIn.count() > 0 && signIn.first().isVisible()) return false;
-            // 아바타 버튼이 있으면 로그인 상태
-            Locator avatar = page.locator("#avatar-btn, button#avatar-btn");
-            return avatar.count() > 0;
+            return page.locator("#avatar-btn").count() > 0;
         } catch (Exception e) {
-            return true; // 판단 불가 시 진행
+            return true;
         }
     }
 
