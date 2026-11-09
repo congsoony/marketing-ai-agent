@@ -252,7 +252,7 @@ async function loadLogs() {
         <td>${esc(l.videoTitle || l.videoId)}</td>
         <td>${esc(l.profileName || '')}</td>
         <td class="comment" title="${esc(l.comment || '')}">${esc(l.comment || '')}</td>
-        <td><span class="tag ${l.status}">${l.status}</span></td>
+        <td><span class="tag ${l.status}"${l.failReason ? ` title="${esc(l.failReason)}"` : ''}>${l.status}</span>${l.status === 'FAILED' && l.failReason ? `<div class="failmini" title="${esc(l.failReason)}">${esc(l.failReason)}</div>` : ''}</td>
         <td>${shot}</td></tr>`;
     }).join('');
   } catch (e) { /* 조용히 무시 */ }
