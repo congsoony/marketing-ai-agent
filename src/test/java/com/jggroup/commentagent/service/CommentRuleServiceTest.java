@@ -23,19 +23,28 @@ class CommentRuleServiceTest {
     }
 
     @Test
-    @DisplayName("40~120자이고 금지요소 없으면 통과")
+    @DisplayName("40~120자 + 운명원 언급 + 금지요소 없으면 통과")
     void valid_whenWithinRangeAndClean() {
-        String ok = "가".repeat(40);
+        String ok = "운명원 " + "가".repeat(40);   // 브랜드명 포함, 44자
         assertThat(rule.validate(ok).valid()).isTrue();
     }
 
     @Test
     @DisplayName("경계값 40자/120자는 통과, 39자/121자는 실패")
     void boundary() {
-        assertThat(rule.validate("가".repeat(40)).valid()).isTrue();
-        assertThat(rule.validate("가".repeat(120)).valid()).isTrue();
+        assertThat(rule.validate("운명원" + "가".repeat(37)).valid()).isTrue();    // 40자
+        assertThat(rule.validate("운명원" + "가".repeat(117)).valid()).isTrue();   // 120자
         assertThat(rule.validate("가".repeat(39)).valid()).isFalse();
         assertThat(rule.validate("가".repeat(121)).valid()).isFalse();
+    }
+
+    @Test
+    @DisplayName("운명원 브랜드명이 없으면 실패(유도 강제)")
+    void brandMissing_fails() {
+        String noBrand = "연애 사주 한번 보고 싶네요 ".repeat(4);   // 40~120, 운명원 없음
+        assertThat(rule.charCount(noBrand)).isBetween(40, 120);
+        assertThat(rule.validate(noBrand).valid()).isFalse();
+        assertThat(rule.validate(noBrand).reason()).contains("운명원");
     }
 
     @Test

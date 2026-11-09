@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 /**
  * 댓글 규칙 검증 (요구사항 §2 "댓글 제약"):
  *  - 40~120자 (설정값)
+ *  - '운명원'(브랜드명) 1회 이상 자연스럽게 언급 — 유도 목적상 필수
  *  - 금지: 링크 · 해시태그 · '운명원을 직접 이용해 본 것처럼 지어낸 후기'
  * 생성 후 코드에서 2차 강제 → 통과 못 하면 재생성.
  */
@@ -60,7 +61,10 @@ public class CommentRuleService {
             return Validation.fail("해시태그 포함 금지");
         }
         String brand = rule.getBrand();
-        if (c.contains(brand) && FAKE_REVIEW.matcher(c).find()) {
+        if (!c.contains(brand)) {
+            return Validation.fail("'" + brand + "' 브랜드명을 댓글에 자연스럽게 1회 언급해야 함(현재 미포함)");
+        }
+        if (FAKE_REVIEW.matcher(c).find()) {
             return Validation.fail("'" + brand + "'을(를) 직접 이용해 본 것처럼 지어낸 후기 금지");
         }
         return Validation.ok();

@@ -75,7 +75,7 @@ class OpenAiCommentServiceTest {
     @Test
     @DisplayName("규칙을 만족하는 응답이면 1회 시도로 초안 반환")
     void generate_firstTrySuccess() {
-        String comment = "가".repeat(60);
+        String comment = "운명원 " + "가".repeat(56);   // 60자, 브랜드명 포함
         server.expect(requestTo(containsString("/v1/chat/completions")))
                 .andRespond(withSuccess(
                         chat("{\"concern\":\"연애 고민\",\"comment\":\"" + comment + "\"}"),
@@ -94,7 +94,7 @@ class OpenAiCommentServiceTest {
     @Test
     @DisplayName("규칙 위반이면 재생성한다(2번째 응답으로 통과, attempts=2)")
     void generate_retriesOnRuleViolation() {
-        String good = "나".repeat(60);
+        String good = "운명원 " + "나".repeat(56);   // 60자, 브랜드명 포함
         // 1차: 너무 짧아 규칙 위반 → 2차: 정상
         server.expect(requestTo(containsString("/v1/chat/completions")))
                 .andRespond(withSuccess(chat("{\"concern\":\"c\",\"comment\":\"짧음\"}"),
@@ -114,7 +114,7 @@ class OpenAiCommentServiceTest {
     @Test
     @DisplayName("응답에 앞뒤 잡텍스트가 있어도 JSON 객체만 뽑아 파싱한다")
     void generate_extractsJsonFromNoisyContent() {
-        String comment = "다".repeat(55);
+        String comment = "운명원 " + "다".repeat(51);   // 55자, 브랜드명 포함
         String noisy = "설명: 아래가 결과입니다 ```json {\"concern\":\"고민\",\"comment\":\""
                 + comment + "\"} ``` 끝";
         server.expect(requestTo(containsString("/v1/chat/completions")))
