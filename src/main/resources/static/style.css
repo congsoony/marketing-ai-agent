@@ -160,7 +160,7 @@ button.small{padding:6px 11px; font-size:12px}
 .video-list{overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable;
   min-height:300px; max-height:min(72vh, 800px);
   display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));
-  align-content:start; gap:12px; padding:0 8px 0 0}
+  grid-auto-rows:max-content; align-content:start; gap:12px; padding:0 8px 0 0}
 /* 작고 네모난(≈정사각형) 카드: 썸네일(4:3) 위 + 정보 아래 → 여러 칸 그리드 */
 .vitem{display:flex; flex-direction:column; min-width:0; padding:0; border:1px solid var(--line); border-radius:12px;
   cursor:pointer; background:var(--panel-3); position:relative; overflow:hidden;
