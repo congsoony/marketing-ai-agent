@@ -110,8 +110,8 @@ public class PostingService {
                         noteMap.put(id, "게시 완료 · 내 댓글 확인됨");
                     } else {
                         l.setStatus(PostStatus.FAILED);
-                        l.setFailReason(r.failReason());
-                        noteMap.put(id, "실패: " + r.failReason());
+                        l.setFailReason(clip(r.failReason()));
+                        noteMap.put(id, "실패: " + clip(r.failReason()));
                     }
                     if (r.screenshotPath() != null) l.setScreenshotPath(r.screenshotPath());
                     repo.save(l);
@@ -120,10 +120,10 @@ public class PostingService {
                 log.error("게시 작업 예외 id={}", id, e);
                 repo.findById(id).ifPresent(l -> {
                     l.setStatus(PostStatus.FAILED);
-                    l.setFailReason("예외: " + e.getMessage());
+                    l.setFailReason(clip("예외: " + e.getMessage()));
                     repo.save(l);
                 });
-                noteMap.put(id, "실패: " + e.getMessage());
+                noteMap.put(id, "실패: " + clip(e.getMessage()));
             } finally {
                 inFlight.remove(videoId);
             }
@@ -163,6 +163,13 @@ public class PostingService {
     private String toShotUrl(String path) {
         if (path == null || path.isBlank()) return null;
         return "/shots/" + Paths.get(path).getFileName();
+    }
+
+    /** fail_reason 컬럼(2000자) 초과로 저장이 또 실패하는 것 방지 — 앞부분만 보존. */
+    private static String clip(String s) {
+        if (s == null) return null;
+        int max = 1900;
+        return s.length() <= max ? s : s.substring(0, max) + " …(이하 생략)";
     }
 
     private java.time.Instant startOfToday() {
