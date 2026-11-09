@@ -4,6 +4,7 @@ import com.jggroup.commentagent.config.AppProperties;
 import com.jggroup.commentagent.dto.*;
 import com.jggroup.commentagent.service.OpenAiCommentService;
 import com.jggroup.commentagent.service.PostingService;
+import com.jggroup.commentagent.service.ProfileLoginService;
 import com.jggroup.commentagent.service.YoutubeService;
 import com.jggroup.commentagent.util.VideoIdExtractor;
 import jakarta.validation.Valid;
@@ -30,13 +31,16 @@ public class DashboardController {
     private final YoutubeService youtube;
     private final OpenAiCommentService commentService;
     private final PostingService posting;
+    private final ProfileLoginService profileLogin;
 
     public DashboardController(AppProperties props, YoutubeService youtube,
-                               OpenAiCommentService commentService, PostingService posting) {
+                               OpenAiCommentService commentService, PostingService posting,
+                               ProfileLoginService profileLogin) {
         this.props = props;
         this.youtube = youtube;
         this.commentService = commentService;
         this.posting = posting;
+        this.profileLogin = profileLogin;
     }
 
     // ① 영상 불러오기
@@ -77,6 +81,12 @@ public class DashboardController {
     @GetMapping("/logs")
     public List<PostStatusView> logs() {
         return posting.recentLogs();
+    }
+
+    // 프로필별 로그인 상태(초록=로그인 / 회색=미로그인)
+    @GetMapping("/profiles")
+    public List<ProfileView> profiles() {
+        return profileLogin.profilesWithStatus();
     }
 
     // 화면 표시용 설정

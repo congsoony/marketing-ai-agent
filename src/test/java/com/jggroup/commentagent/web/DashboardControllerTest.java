@@ -9,6 +9,7 @@ import com.jggroup.commentagent.exception.NotFoundException;
 import com.jggroup.commentagent.exception.RuleViolationException;
 import com.jggroup.commentagent.service.OpenAiCommentService;
 import com.jggroup.commentagent.service.PostingService;
+import com.jggroup.commentagent.service.ProfileLoginService;
 import com.jggroup.commentagent.service.YoutubeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,7 @@ class DashboardControllerTest {
     @MockitoBean YoutubeService youtube;
     @MockitoBean OpenAiCommentService commentService;
     @MockitoBean PostingService posting;
+    @MockitoBean ProfileLoginService profileLogin;
 
     @Test
     @DisplayName("GET /api/config: 화면 표시용 설정을 내려준다")
