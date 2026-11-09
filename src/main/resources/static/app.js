@@ -29,12 +29,10 @@ async function loadConfig() {
     `<span class="badge">브랜드 <b>${CONFIG.brand}</b></span>` +
     `<span class="badge">글자수 <b>${CONFIG.minChars}~${CONFIG.maxChars}</b></span>` +
     `<span class="badge">하루 상한 <b>${CONFIG.dailyMax}</b></span>` +
-    `<span class="badge">프로필 <b>${CONFIG.profiles.join(', ') || '없음'}</b></span>`;
+    `<span class="badge" id="profBadge">프로필 로딩…</span>`;
 
-  // 프로필 선택 드롭다운
-  const sel = $('profileSel');
-  sel.innerHTML = '<option value="">자동 (로테이션)</option>' +
-    CONFIG.profiles.map(p => `<option value="${p}">${p}</option>`).join('');
+  // 프로필 로그인 상태 로드(드롭다운 + 뱃지)
+  await loadProfiles();
 
   // 키 미설정 경고
   const warn = [];
@@ -45,6 +43,27 @@ async function loadConfig() {
     w.textContent = '⚠ 환경변수 미설정: ' + warn.join(', ') +
       ' — 설정 후 재시작해야 실제 호출이 됩니다.';
     w.classList.remove('hidden');
+  }
+}
+
+// 프로필별 로그인 상태 → 드롭다운 라벨 + 뱃지 점(초록=로그인/회색=미로그인)
+async function loadProfiles() {
+  let profs;
+  try { profs = await api('/api/profiles'); }
+  catch (e) { return; }
+  // 드롭다운(현재 선택값 유지)
+  const sel = $('profileSel');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">자동 (로테이션)</option>' +
+    profs.map(p => `<option value="${esc(p.name)}">${esc(p.name)} ${p.loggedIn ? '● 로그인됨' : '○ 로그인 필요'}</option>`).join('');
+  sel.value = cur;
+  // 뱃지: 프로필별 로그인 점 + 요약
+  const badge = $('profBadge');
+  if (badge) {
+    const n = profs.filter(p => p.loggedIn).length;
+    badge.innerHTML = '프로필 ' +
+      profs.map(p => `<span class="pdot ${p.loggedIn ? 'on' : 'off'}" title="${esc(p.name)} ${p.loggedIn ? '로그인됨' : '미로그인'}">${esc(p.name)}</span>`).join('') +
+      ` <b>(${n}/${profs.length})</b>`;
   }
 }
 
@@ -268,7 +287,7 @@ $('btnTrending').onclick = () => loadVideos(true);
 $('btnLink').onclick = selectByLink;
 $('btnRegen').onclick = generateDraft;
 $('btnPost').onclick = post;
-$('btnRefreshLogs').onclick = loadLogs;
+$('btnRefreshLogs').onclick = () => { loadLogs(); loadProfiles(); };
 $('comment').addEventListener('input', updateCharCount);
 
 loadConfig().then(loadLogs);
