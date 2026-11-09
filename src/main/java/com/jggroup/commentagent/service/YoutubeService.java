@@ -15,7 +15,9 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * YouTube Data API v3 연동.
@@ -46,8 +48,19 @@ public class YoutubeService {
         }
     }
 
-    /** ① 최신 영상 목록 (썸네일·제목·채널·올린 날짜). */
+    /** ① 최신 영상 목록 (썸네일·제목·채널·올린 날짜 + 조회수). */
     public List<VideoSummary> listLatest(String query, int maxResults) {
+        List<VideoSummary> base = searchLatest(query, maxResults);
+        // 조회수만 추가로 붙여줌(시간당 증가율은 '뜨기 직전' 전용 지표라 넣지 않음).
+        Map<String, Long> views = fetchViewCounts(base.stream().map(VideoSummary::videoId).toList());
+        return base.stream()
+                .map(v -> new VideoSummary(v.videoId(), v.title(), v.channelTitle(),
+                        v.thumbnailUrl(), v.publishedAt(), v.url(), views.get(v.videoId()), null))
+                .toList();
+    }
+
+    /** /search 만 호출해 기본 정보(조회수 없음)를 파싱 — listLatest·findTrending 공용. */
+    private List<VideoSummary> searchLatest(String query, int maxResults) {
         requireKey();
         String q = (query == null || query.isBlank()) ? props.getYoutube().getDefaultQuery() : query;
         JsonNode root = client.get()
@@ -78,6 +91,33 @@ public class YoutubeService {
                     sn.path("publishedAt").asText("")));
         }
         return out;
+    }
+
+    /** 영상 id 목록의 조회수(viewCount)를 한 번에 조회해 map 으로 반환. */
+    private Map<String, Long> fetchViewCounts(List<String> ids) {
+        Map<String, Long> map = new HashMap<>();
+        if (ids.isEmpty()) return map;
+        try {
+            JsonNode root = client.get()
+                    .uri(uri -> uri.path("/videos")
+                            .queryParam("key", props.getYoutube().getApiKey())
+                            .queryParam("part", "statistics")
+                            .queryParam("id", String.join(",", ids))
+                            .build())
+                    .retrieve()
+                    .body(JsonNode.class);
+            if (root != null) {
+                for (JsonNode item : root.path("items")) {
+                    String vid = item.path("id").asText(null);
+                    if (vid != null) {
+                        map.put(vid, item.path("statistics").path("viewCount").asLong(0));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("조회수 수집 실패: {}", e.getMessage());
+        }
+        return map;
     }
 
     /** 단일 영상의 제목·채널 (링크 직접 입력 가점 경로에서 사용). */
@@ -147,8 +187,8 @@ public class YoutubeService {
     public List<VideoSummary> findTrending() {
         requireKey();
         AppProperties.Trending t = props.getTrending();
-        // 1) 최근 업로드 검색
-        List<VideoSummary> recent = listLatest(t.getQuery(), 50);
+        // 1) 최근 업로드 검색 (조회수 보강 없이 — 아래에서 통계를 직접 조회하므로)
+        List<VideoSummary> recent = searchLatest(t.getQuery(), 50);
         if (recent.isEmpty()) return List.of();
 
         // 2) 상세 통계 조회 (videos.list 는 id 최대 50개 일괄)

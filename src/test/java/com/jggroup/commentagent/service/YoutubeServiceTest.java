@@ -57,7 +57,7 @@ class YoutubeServiceTest {
     }
 
     @Test
-    @DisplayName("listLatest: videoId 있는 항목만 파싱하고 썸네일/워치URL을 채운다")
+    @DisplayName("listLatest: videoId 있는 항목만 파싱하고 썸네일/워치URL/조회수를 채운다(시간당 없음)")
     void listLatest_parsesItems() {
         String body = """
                 {"items":[
@@ -65,8 +65,14 @@ class YoutubeServiceTest {
                    "publishedAt":"2026-11-06T00:00:00Z","thumbnails":{"medium":{"url":"http://thumb/1"}}}},
                   {"id":{"kind":"youtube#channel"},"snippet":{"title":"채널결과"}}
                 ]}""";
+        // 1) /search → 영상 목록
         server.expect(requestTo(containsString("/youtube/v3/search")))
                 .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+        // 2) /videos?part=statistics → 조회수 보강
+        server.expect(requestTo(containsString("/youtube/v3/videos")))
+                .andRespond(withSuccess("""
+                        {"items":[{"id":"VID0000001","statistics":{"viewCount":"1234"}}]}""",
+                        MediaType.APPLICATION_JSON));
 
         List<VideoSummary> out = service.listLatest("연애", 5);
 
@@ -78,6 +84,8 @@ class YoutubeServiceTest {
         assertThat(v.channelTitle()).isEqualTo("채널1");
         assertThat(v.thumbnailUrl()).isEqualTo("http://thumb/1");
         assertThat(v.url()).contains("watch?v=VID0000001");
+        assertThat(v.viewCount()).isEqualTo(1234);   // 조회수 채워짐
+        assertThat(v.viewsPerHour()).isNull();       // 시간당은 '뜨기 직전'에서만
     }
 
     @Test
