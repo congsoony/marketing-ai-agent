@@ -47,7 +47,7 @@ app:
     model: gpt-4o-mini
     base-url: https://api.openai.com
     max-tokens: 1024
-    temperature: 0.8
+    temperature: 0.9
   comment:
     min-chars: 40
     max-chars: 120
