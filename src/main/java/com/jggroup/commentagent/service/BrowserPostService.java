@@ -105,6 +105,9 @@ public class BrowserPostService {
                 boolean confirmed = verifyPosted(page, commentText);
                 String shot = screenshot(page, shotBase + (confirmed ? "_success" : "_unconfirmed"));
 
+                // 게시 결과(달린 댓글)를 눈으로 확인할 수 있게 창을 6초 유지 후 닫음
+                page.waitForTimeout(6000);
+
                 if (confirmed) {
                     listener.onProgress(PostStatus.SUCCESS, "게시 완료 · 내 댓글 확인됨", shot);
                     return PostResult.ok(shot, commentText);
