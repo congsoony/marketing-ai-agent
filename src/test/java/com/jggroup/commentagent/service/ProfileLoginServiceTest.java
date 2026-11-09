@@ -53,4 +53,25 @@ class ProfileLoginServiceTest {
     void notLoggedIn_whenNoCookieFile(@TempDir Path dir) {
         assertThat(service().isLoggedIn(profile(dir))).isFalse();
     }
+
+    @Test
+    @DisplayName("Preferences 의 account_info 에서 계정 이름/이메일을 꺼낸다")
+    void readAccount_fromPreferences(@TempDir Path dir) throws Exception {
+        Path prefs = dir.resolve("Default").resolve("Preferences");
+        Files.createDirectories(prefs.getParent());
+        Files.writeString(prefs, "{\"account_info\":[{\"email\":\"user@gmail.com\","
+                + "\"full_name\":\"콩순이\",\"given_name\":\"순이\"}]}");
+
+        String[] acct = service().readAccount(profile(dir));
+        assertThat(acct[0]).isEqualTo("콩순이");
+        assertThat(acct[1]).isEqualTo("user@gmail.com");
+    }
+
+    @Test
+    @DisplayName("Preferences 가 없거나 계정 정보가 없으면 [null,null]")
+    void readAccount_whenMissing(@TempDir Path dir) {
+        String[] acct = service().readAccount(profile(dir));
+        assertThat(acct[0]).isNull();
+        assertThat(acct[1]).isNull();
+    }
 }
