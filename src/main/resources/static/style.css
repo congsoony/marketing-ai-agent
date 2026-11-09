@@ -177,11 +177,12 @@ button.small{padding:6px 11px; font-size:12px}
   display:block; transition:transform .3s}
 .vitem:hover img{transform:scale(1.05)}
 .vmeta{display:flex; flex-direction:column; gap:4px; min-width:0; padding:9px 11px 11px}
-.vtitle{font-weight:600; font-size:13px; line-height:1.4;
+.vtitle{font-weight:600; font-size:13px; line-height:1.4; min-height:2.8em;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
 .vsub{color:var(--muted); font-size:10.5px; font-family:var(--mono);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.vstat{color:var(--gold); font-size:10.5px; font-family:var(--mono)}
+.vstat{color:var(--gold); font-size:10.5px; font-family:var(--mono);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
 @media(max-height:680px){
   .video-list{min-height:300px; max-height:calc(100vh - 300px)}
