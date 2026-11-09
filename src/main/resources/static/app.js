@@ -55,14 +55,21 @@ async function loadProfiles() {
   const sel = $('profileSel');
   const cur = sel.value;
   sel.innerHTML = '<option value="">자동 (로테이션)</option>' +
-    profs.map(p => `<option value="${esc(p.name)}">${esc(p.name)} ${p.loggedIn ? '● 로그인됨' : '○ 로그인 필요'}</option>`).join('');
+    profs.map(p => {
+      const label = p.loggedIn ? (p.account ? `— ${esc(p.account)}` : '● 로그인됨') : '○ 로그인 필요';
+      return `<option value="${esc(p.name)}">${esc(p.name)} ${label}</option>`;
+    }).join('');
   sel.value = cur;
-  // 뱃지: 프로필별 로그인 점 + 요약
+  // 뱃지: 프로필별 로그인 점 + 계정 이름 + 요약
   const badge = $('profBadge');
   if (badge) {
     const n = profs.filter(p => p.loggedIn).length;
     badge.innerHTML = '프로필 ' +
-      profs.map(p => `<span class="pdot ${p.loggedIn ? 'on' : 'off'}" title="${esc(p.name)} ${p.loggedIn ? '로그인됨' : '미로그인'}">${esc(p.name)}</span>`).join('') +
+      profs.map(p => {
+        const who = p.account || (p.loggedIn ? '로그인됨' : '미로그인');
+        const tip = p.email ? `${who} (${p.email})` : who;
+        return `<span class="pdot ${p.loggedIn ? 'on' : 'off'}" title="${esc(p.name)} — ${esc(tip)}">${esc(p.name)}·${esc(who)}</span>`;
+      }).join('') +
       ` <b>(${n}/${profs.length})</b>`;
   }
 }
